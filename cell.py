@@ -25,11 +25,7 @@ class Cell(object):
         self.bear = None
 
     def is_empty(self):
-        res = (not self.has_honey) and (self.bear is None)
-        return res
-
-    def has_honey(self):
-        return self.has_honey
+        return (not self.has_honey) and (self.bear is None)
 
     def has_bear(self):
         return self.bear

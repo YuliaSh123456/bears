@@ -3,6 +3,7 @@ import sys
 import argparse
 import constants
 import random
+import field
 
 from field import out_file
 
@@ -11,8 +12,8 @@ def generate_fighting_coef():
     return random.random()
 
 
-def end_of_fight(field, winner, looser, winners_fighting_coef, loosers_fighting_coef):
-    winner.life_count += loosers_fighting_coef
+def end_of_fight(field, winner, looser, winners_fighting_coef, losers_fighting_coef):
+    winner.life_count += losers_fighting_coef
     looser.life_count -= winners_fighting_coef
 
     if looser.life_count <= 0:
@@ -35,6 +36,7 @@ class Bear(object):
         self.cell_row = cell_row
         self.cell_col = cell_col
         self.name = name
+        self.reduced_activity_level = False
 
     def print_bear_data(self):
         print >> out_file, 'B{} life count {} last action {} location r {} c {}'.format(self.name, self.life_count, self.last_action, self.cell_row, self.cell_col)
@@ -51,6 +53,7 @@ class Bear(object):
             print >> out_file, 'Bear {} ate honey'.format(self.name)
             self.life_count += 1
             self.activity_level /= 3
+            self.reduced_activity_level = True
             cell.remove_honey()
 
     def do_you_defeat(self):
@@ -72,18 +75,17 @@ class Bear(object):
         cell = field.get_cell_at_location(self.cell_row, self.cell_col)
         cell.remove_bear()
 
-    def fight(self, another_bear, field):
+    def fight(self, another_bear, the_field):
         print >> out_file, "F I G H T"
         do_fight = random.random()
-        do_defeat = random.random()
         if do_fight <= self.aggression:
             print >> out_file, "Fight according to aggression level"
-            if do_defeat <= self.cowardice and not another_bear.do_you_defeat():
+            if self.do_you_defeat() and not another_bear.do_you_defeat():
                 # I defeat
                 self.life_count = self.life_count * 0.9
-                another_bear.life_count = another_bear.life_count + self.life_count * 0.1
+                another_bear.life_count += self.life_count * 0.1
                 # I go to random cell
-                self.go_to_random_cell(field)
+                self.go_to_random_cell(the_field)
                 print >> out_file, 'B{} defeats, goes to r{} c{} '.format(self.name, self.cell_row, self.cell_col)
             else:
                 # No one defeats - fight
@@ -96,21 +98,21 @@ class Bear(object):
 
                 # I win
                 if my_fighting_coef > his_fighting_coef:
-                    end_of_fight(field, self, another_bear, my_fighting_coef, his_fighting_coef)
+                    end_of_fight(the_field, self, another_bear, my_fighting_coef, his_fighting_coef)
                     print >> out_file, 'B{} wins '.format(self.name)
                 # I loose
                 if his_fighting_coef > my_fighting_coef:
-                    end_of_fight(field, another_bear, self, his_fighting_coef, my_fighting_coef)
+                    end_of_fight(the_field, another_bear, self, his_fighting_coef, my_fighting_coef)
                     print >> out_file, 'B{} looses '.format(self.name)
         else:
             # Aggression level doesn't let fighting
             print >> out_file, "Agression not enough for fighting, go to random cell"
-            self.go_to_random_cell(field)
+            self.go_to_random_cell(the_field)
 
-        field.draw_field()
+        the_field.draw_field()
         field.draw_bears_data()
 
-    def move(self, field):
+    def move(self, the_field):
 
         new_row = 0
         new_col = 0
@@ -119,7 +121,7 @@ class Bear(object):
 
         if do_move > self.activity_level:
             print >> out_file, 'B{} rests'.format(self.name)
-            self.last_action == constants.REST
+            self.last_action = constants.REST
             return
 
         if self.last_action == constants.REST:
@@ -161,16 +163,19 @@ class Bear(object):
 
         print >> out_file, 'B{} moves {} from r{} c{} to r{} c{}'.format(self.name, mov_log, self.cell_row, self.cell_col, new_row, new_col)
 
-        another_bear = field.get_bear_present_in_cell(new_row, new_col)
+        another_bear = the_field.get_bear_present_in_cell(new_row, new_col)
 
         if another_bear is not None:
             print >> out_file, ' FIGHTS with B{} r{} c{} to '.format(another_bear.name, another_bear.cell_row, another_bear.cell_col)
-            self.fight(another_bear, field)
+            self.fight(another_bear, the_field)
         else:
-            field.remove_bear(self.cell_row, self.cell_col)
-            field.set_bear(self, new_row, new_col)
+            the_field.remove_bear(self.cell_row, self.cell_col)
+            the_field.set_bear(self, new_row, new_col)
             self.set_cell(new_row, new_col)
-            self.eat_honey(field)
+            self.eat_honey(the_field)
 
-        field.draw_field()
+        if self.reduced_activity_level:
+            self.reduced_activity_level = False
+
+        the_field.draw_field()
         field.draw_bears_data()

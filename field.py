@@ -45,18 +45,22 @@ def populate_field(field_instance):
         new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
         list_of_bears.append(new_bear)
         random_empty_cell.set_bear(new_bear)
-        bear_counter = bear_counter - 1
+        bear_counter -= 1
+
+
+def draw_bears_data():
+    for each_bear in range(len(list_of_bears)):
+        list_of_bears[each_bear].print_bear_data()
 
 
 class Field(object):
 
     def __init__(self):
-        """
-            Args:
-        """
+
         self.matrix = []
 
         self.matrix = [[cell.Cell(i, j) for i in range(constants.MAX_ROW)] for j in range(constants.MAX_COL)]
+        populate_field(self)
 
     def get_random_empty_cell(self):
         col = randint(0, constants.MAX_COL-1)
@@ -81,8 +85,8 @@ class Field(object):
     def remove_bear(self, row, col):
         self.matrix[row][col].bear = None
 
-    def set_bear(self, bear, row, col):
-        self.matrix[row][col].set_bear(bear)
+    def set_bear(self, the_bear, row, col):
+        self.matrix[row][col].set_bear(the_bear)
 
     def set_honey(self, row, col):
         self.matrix[row][col].set_honey()
@@ -95,10 +99,6 @@ class Field(object):
 
     def get_bear_present_in_cell(self, row, col):
         return self.matrix[row][col].get_bear()
-
-    def draw_bears_data(self):
-        for each_bear in range(len(list_of_bears)):
-            list_of_bears[each_bear].print_bear_data()
 
     def draw_field(self):
         str_col = ""
