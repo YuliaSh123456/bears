@@ -41,8 +41,49 @@ class Bear(object):
     def print_bear_data(self):
         print >> out_file, 'B{} life count {} last action {} location r {} c {}'.format(self.name, self.life_count, self.last_action, self.cell_row, self.cell_col)
 
-    def eat_honey(self, field):
-        cell = field.get_cell_at_location(self.cell_row, self.cell_col)
+    def create_value_for_feature(self, value_bear_one, value_bear_two):
+        from_whom_to_inherit = random.randint(0,1)
+
+        if  from_whom_to_inherit == 0:
+            new_value = value_bear_one
+        else:
+            new_value = value_bear_two
+
+        # Add mutation
+        new_value += random.gauss(0, 1.0/10)
+        return new_value
+
+
+    def reproduct(self, another_bear, the_field):
+        life_count = constants.INITIAL_LIFE_LEVEL
+
+        activity_level = self.create_value_for_feature(self.activity_level, another_bear.activity_level)
+        smell = self.create_value_for_feature(self.smell, another_bear.smell)
+        aggression = self.create_value_for_feature(self.aggression, another_bear.aggression)
+        cowardice = self.create_value_for_feature(self.cowardice, another_bear.cowardice)
+
+        activity_level = random.random()
+        smell = random.random()
+        aggression = random.random()
+        cowardice = random.random()
+        life_count = constants.INITIAL_LIFE_LEVEL
+        random_empty_cell = the_field.get_random_empty_cell()
+
+        baby_bear = Bear(
+            self.name.split("B")[0] + another_bear.name.split("B")[0],
+            activity_level,
+            smell,
+            aggression,
+            cowardice,
+            life_count,
+            random_empty_cell.row,
+            random_empty_cell.col)
+
+        field.list_of_bears.append(baby_bear)
+        random_empty_cell.set_bear(baby_bear)
+
+    def eat_honey(self, the_field):
+        cell = the_field.get_cell_at_location(self.cell_row, self.cell_col)
 
         if not cell.has_honey:
             return
