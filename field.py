@@ -26,26 +26,7 @@ def create_bear(name, cell_row, cell_col):
         cell_col)
 
 
-def populate_field(field_instance):
 
-    honey_counter = constants.HONEY_AMOUNT
-
-    while honey_counter > 0:
-        row = random.randint(0, constants.MAX_ROW - 1)
-        col = random.randint(0, constants.MAX_COL - 1)
-
-        if not field_instance.get_cell_at_location(row, col).has_honey:
-            field_instance.set_honey(row, col)
-            honey_counter = honey_counter - 1
-
-    bear_counter = constants.BEARS_AMOUNT
-
-    while bear_counter > 0:
-        random_empty_cell = field_instance.get_random_empty_cell()
-        new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
-        list_of_bears.append(new_bear)
-        random_empty_cell.set_bear(new_bear)
-        bear_counter -= 1
 
 
 def draw_bears_data():
@@ -56,11 +37,28 @@ def draw_bears_data():
 class Field(object):
 
     def __init__(self):
-
-        self.matrix = []
-
         self.matrix = [[cell.Cell(i, j) for i in range(constants.MAX_ROW)] for j in range(constants.MAX_COL)]
-        populate_field(self)
+        self.populate_field()
+
+    def populate_field(self):
+        honey_counter = constants.HONEY_AMOUNT
+
+        while honey_counter > 0:
+            row = random.randint(0, constants.MAX_ROW - 1)
+            col = random.randint(0, constants.MAX_COL - 1)
+
+            if not self.get_cell_at_location(row, col).has_honey:
+                self.set_honey(row, col)
+                honey_counter = honey_counter - 1
+
+        bear_counter = constants.BEARS_AMOUNT
+
+        while bear_counter > 0:
+            random_empty_cell = self.get_random_empty_cell()
+            new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
+            list_of_bears.append(new_bear)
+            random_empty_cell.set_bear(new_bear)
+            bear_counter -= 1
 
     def get_random_empty_cell(self):
         col = randint(0, constants.MAX_COL-1)

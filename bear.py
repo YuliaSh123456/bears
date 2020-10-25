@@ -12,14 +12,14 @@ def generate_fighting_coef():
     return random.random()
 
 
-def end_of_fight(field, winner, looser, winners_fighting_coef, losers_fighting_coef):
+def end_of_fight(field, winner, loser, winners_fighting_coef, losers_fighting_coef):
     winner.life_count += losers_fighting_coef
-    looser.life_count -= winners_fighting_coef
+    loser.life_count -= winners_fighting_coef
 
-    if looser.life_count <= 0:
-        looser.die(field)
+    if loser.life_count <= 0:
+        loser.die(field)
     else:
-        looser.go_to_random_cell(field)
+        loser.go_to_random_cell(field)
 
 
 class Bear(object):
@@ -176,6 +176,7 @@ class Bear(object):
 
         if self.reduced_activity_level:
             self.reduced_activity_level = False
+            self.activity_level *= 3
 
         the_field.draw_field()
         field.draw_bears_data()
