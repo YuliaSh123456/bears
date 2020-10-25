@@ -29,10 +29,6 @@ def main():
             if the_bear.life_count > 0:
                 the_bear.move(my_world_field)
 
-        #if whose_turn >= constants.BEARS_AMOUNT - 1:
-        #    whose_turn = 0
-        #else:
-        #    whose_turn += 1
 
     print >> out_file, "FINISHED"
 
