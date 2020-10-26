@@ -1,4 +1,5 @@
 import random
+import sys
 from random import randint
 import cell
 import bear
@@ -7,6 +8,7 @@ import constants
 list_of_bears = []
 
 out_file = open('bear_out.txt', 'w')
+
 
 def create_bear(name, cell_row, cell_col):
     activity_level = random.random()
@@ -26,9 +28,6 @@ def create_bear(name, cell_row, cell_col):
         cell_col)
 
 
-
-
-
 def draw_bears_data():
     for each_bear in range(len(list_of_bears)):
         list_of_bears[each_bear].print_bear_data()
@@ -43,6 +42,10 @@ class Field(object):
     def populate_field(self):
         honey_counter = constants.HONEY_AMOUNT
 
+        if honey_counter > constants.MAX_ROW * constants.MAX_COL:
+            print >> out_file, "Irrational amount of honey"
+            sys.exit()
+
         while honey_counter > 0:
             row = random.randint(0, constants.MAX_ROW - 1)
             col = random.randint(0, constants.MAX_COL - 1)
@@ -55,18 +58,29 @@ class Field(object):
 
         while bear_counter > 0:
             random_empty_cell = self.get_random_empty_cell()
+
+            if random_empty_cell is None:
+                print >> out_file, "Irrational correlation between field size and amount of bears"
+                sys.exit()
+
             new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
             list_of_bears.append(new_bear)
             random_empty_cell.set_bear(new_bear)
             bear_counter -= 1
 
     def get_random_empty_cell(self):
-        col = randint(0, constants.MAX_COL-1)
-        row = randint(0, constants.MAX_ROW-1)
+        col = randint(0, constants.MAX_COL - 1)
+        row = randint(0, constants.MAX_ROW - 1)
 
-        while not self.matrix[row][col].is_empty():
-            col = randint(0, constants.MAX_COL-1)
-            row = randint(0, constants.MAX_ROW-1)
+        count_cells = constants.MAX_ROW * constants.MAX_COL
+
+        while not self.matrix[row][col].is_empty() and count_cells > 0:
+            col = randint(0, constants.MAX_COL - 1)
+            row = randint(0, constants.MAX_ROW - 1)
+            count_cells -= 1
+
+        if count_cells == 0:
+            return None
 
         return self.matrix[row][col]
 
@@ -117,5 +131,3 @@ class Field(object):
                 str_col = str_col + '{} {} {} {} ||'.format(bear_name, rows, cols, honey)
             print >> out_file, str_col
             str_col = ""
-
-

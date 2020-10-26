@@ -28,15 +28,15 @@ def main():
             if the_bear.life_count > 0:
                 the_bear.move(my_world_field)
 
-    # Two left - do reproduct
-    list_of_live_beras = []
+    # Two left - do reproduction
+    list_of_live_bears = []
     for the_bear in field.list_of_bears:
         if the_bear.life_count > 0:
-            list_of_live_beras.append(the_bear)
+            list_of_live_bears.append(the_bear)
 
-    list_of_live_beras[0].reproduct(list_of_live_beras[1], my_world_field)
+    list_of_live_bears[0].reproduct(list_of_live_bears[1], my_world_field)
 
-    print >> out_file, "REPRODUCT"
+    print >> out_file, "REPRODUCTION"
 
     my_world_field.draw_field()
     field.draw_bears_data()

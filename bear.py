@@ -39,20 +39,16 @@ class Bear(object):
         self.reduced_activity_level = False
 
     def print_bear_data(self):
-        print >> out_file, 'B{} life count {} last action {} location r {} c {}'.format(self.name, self.life_count, self.last_action, self.cell_row, self.cell_col)
+        print >> out_file, 'B{} life count {} last action {} location r {} c {}'.format(self.name, self.life_count,
+                                                                                        self.last_action, self.cell_row,
+                                                                                        self.cell_col)
 
     def create_value_for_feature(self, value_bear_one, value_bear_two):
-        from_whom_to_inherit = random.randint(0,1)
-
-        if  from_whom_to_inherit == 0:
-            new_value = value_bear_one
-        else:
-            new_value = value_bear_two
+        new_value = random.choice([value_bear_one, value_bear_two])
 
         # Add mutation
-        new_value += random.gauss(0, 1.0/10)
+        new_value += random.gauss(0, 1.0 / 10)
         return new_value
-
 
     def reproduct(self, another_bear, the_field):
         life_count = constants.INITIAL_LIFE_LEVEL
@@ -62,12 +58,12 @@ class Bear(object):
         aggression = self.create_value_for_feature(self.aggression, another_bear.aggression)
         cowardice = self.create_value_for_feature(self.cowardice, another_bear.cowardice)
 
-        activity_level = random.random()
-        smell = random.random()
-        aggression = random.random()
-        cowardice = random.random()
         life_count = constants.INITIAL_LIFE_LEVEL
         random_empty_cell = the_field.get_random_empty_cell()
+
+        if random_empty_cell is None:
+            print >> out_file, "No place for baby bear"
+            sys.exit()
 
         baby_bear = Bear(
             self.name.split("B")[0] + another_bear.name.split("B")[0],
@@ -116,18 +112,19 @@ class Bear(object):
         cell = field.get_cell_at_location(self.cell_row, self.cell_col)
         cell.remove_bear()
 
+    def defeat(self, another_bear, the_field):
+        self.life_count = self.life_count * 0.9
+        another_bear.life_count += self.life_count * 0.1
+        self.go_to_random_cell(the_field)
+        print >> out_file, 'B{} defeats, goes to r{} c{} '.format(self.name, self.cell_row, self.cell_col)
+
     def fight(self, another_bear, the_field):
         print >> out_file, "F I G H T"
         do_fight = random.random()
         if do_fight <= self.aggression:
             print >> out_file, "Fight according to aggression level"
             if self.do_you_defeat() and not another_bear.do_you_defeat():
-                # I defeat
-                self.life_count = self.life_count * 0.9
-                another_bear.life_count += self.life_count * 0.1
-                # I go to random cell
-                self.go_to_random_cell(the_field)
-                print >> out_file, 'B{} defeats, goes to r{} c{} '.format(self.name, self.cell_row, self.cell_col)
+                self.defeat(another_bear, the_field)
             else:
                 # No one defeats - fight
                 my_fighting_coef = generate_fighting_coef()
@@ -147,7 +144,7 @@ class Bear(object):
                     print >> out_file, 'B{} looses '.format(self.name)
         else:
             # Aggression level doesn't let fighting
-            print >> out_file, "Agression not enough for fighting, go to random cell"
+            print >> out_file, "Aggression not enough for fighting, go to random cell"
             self.go_to_random_cell(the_field)
 
         the_field.draw_field()
@@ -202,12 +199,14 @@ class Bear(object):
                 new_col = self.cell_col + 1
             new_row = self.cell_row
 
-        print >> out_file, 'B{} moves {} from r{} c{} to r{} c{}'.format(self.name, mov_log, self.cell_row, self.cell_col, new_row, new_col)
+        print >> out_file, 'B{} moves {} from r{} c{} to r{} c{}'.format(self.name, mov_log, self.cell_row,
+                                                                         self.cell_col, new_row, new_col)
 
         another_bear = the_field.get_bear_present_in_cell(new_row, new_col)
 
         if another_bear is not None:
-            print >> out_file, ' FIGHTS with B{} r{} c{} to '.format(another_bear.name, another_bear.cell_row, another_bear.cell_col)
+            print >> out_file, ' FIGHTS with B{} r{} c{} to '.format(another_bear.name, another_bear.cell_row,
+                                                                     another_bear.cell_col)
             self.fight(another_bear, the_field)
         else:
             the_field.remove_bear(self.cell_row, self.cell_col)
