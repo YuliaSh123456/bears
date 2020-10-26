@@ -64,7 +64,6 @@ class Bear(object):
         if random_empty_cell is None:
             print >> out_file, "No place for baby bear"
             raise RuntimeError("No place for baby bear")
-            sys.exit()
 
         baby_bear = Bear(
             self.name.split("B")[0] + another_bear.name.split("B")[0],

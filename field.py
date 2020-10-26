@@ -45,7 +45,6 @@ class Field(object):
         if honey_counter > constants.MAX_ROW * constants.MAX_COL:
             print >> out_file, "Irrational amount of honey"
             raise RuntimeError("Irrational amount of honey")
-            sys.exit()
 
         while honey_counter > 0:
             row = random.randint(0, constants.MAX_ROW - 1)
@@ -63,7 +62,6 @@ class Field(object):
             if random_empty_cell is None:
                 print >> out_file, "Irrational correlation between field size and amount of bears"
                 raise RuntimeError("Irrational correlation between field size and amount of bears")
-                sys.exit()
 
             new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
             list_of_bears.append(new_bear)
