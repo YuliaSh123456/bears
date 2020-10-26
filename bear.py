@@ -63,6 +63,7 @@ class Bear(object):
 
         if random_empty_cell is None:
             print >> out_file, "No place for baby bear"
+            raise RuntimeError("No place for baby bear")
             sys.exit()
 
         baby_bear = Bear(
@@ -113,8 +114,8 @@ class Bear(object):
         cell.remove_bear()
 
     def defeat(self, another_bear, the_field):
-        self.life_count = self.life_count * 0.9
         another_bear.life_count += self.life_count * 0.1
+        self.life_count = self.life_count * 0.9
         self.go_to_random_cell(the_field)
         print >> out_file, 'B{} defeats, goes to r{} c{} '.format(self.name, self.cell_row, self.cell_col)
 

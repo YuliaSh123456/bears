@@ -44,6 +44,7 @@ class Field(object):
 
         if honey_counter > constants.MAX_ROW * constants.MAX_COL:
             print >> out_file, "Irrational amount of honey"
+            raise RuntimeError("Irrational amount of honey")
             sys.exit()
 
         while honey_counter > 0:
@@ -61,6 +62,7 @@ class Field(object):
 
             if random_empty_cell is None:
                 print >> out_file, "Irrational correlation between field size and amount of bears"
+                raise RuntimeError("Irrational correlation between field size and amount of bears")
                 sys.exit()
 
             new_bear = create_bear(str(bear_counter), random_empty_cell.row, random_empty_cell.col)
@@ -69,20 +71,15 @@ class Field(object):
             bear_counter -= 1
 
     def get_random_empty_cell(self):
-        col = randint(0, constants.MAX_COL - 1)
-        row = randint(0, constants.MAX_ROW - 1)
 
-        count_cells = constants.MAX_ROW * constants.MAX_COL
+        list_of_empty_cells = []
 
-        while not self.matrix[row][col].is_empty() and count_cells > 0:
-            col = randint(0, constants.MAX_COL - 1)
-            row = randint(0, constants.MAX_ROW - 1)
-            count_cells -= 1
+        for i in range(constants.MAX_ROW - 1):
+            for j in range(constants.MAX_COL - 1):
+                if self.matrix[i][j].is_empty():
+                    list_of_empty_cells.append(self.matrix[i][j])
 
-        if count_cells == 0:
-            return None
-
-        return self.matrix[row][col]
+        return random.choice(list_of_empty_cells)
 
     def get_random_cell_with_no_bear(self):
         col = randint(0, constants.MAX_COL - 1)
