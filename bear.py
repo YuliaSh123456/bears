@@ -22,6 +22,13 @@ def end_of_fight(field, winner, loser, winners_fighting_coef, losers_fighting_co
         loser.go_to_random_cell(field)
 
 
+def make_pace(row_or_col, check_border_value, opposite_border_value, pace):
+    if row_or_col == check_border_value:
+        return opposite_border_value
+    else:
+        return row_or_col + pace
+
+
 class Bear(object):
 
     def __init__(self, name, activity_level, smell, aggression, cowardice, life_count, cell_row, cell_col):
@@ -169,34 +176,22 @@ class Bear(object):
 
         if self.last_direction == constants.MOVEMENT_UP:
             mov_log = mov_log + " UP "
-            if self.cell_row == 0:
-                new_row = constants.MAX_ROW - 1
-            else:
-                new_row = self.cell_row - 1
+            new_row = make_pace(self.cell_row, 0, constants.MAX_ROW - 1, -1)
             new_col = self.cell_col
 
         if self.last_direction == constants.MOVEMENT_DOWN:
             mov_log = mov_log + " DOWN "
-            if self.cell_row == constants.MAX_ROW - 1:
-                new_row = 0
-            else:
-                new_row = self.cell_row + 1
+            new_row = make_pace(self.cell_row, constants.MAX_ROW - 1, 0, 1)
             new_col = self.cell_col
 
         if self.last_direction == constants.MOVEMENT_LEFT:
             mov_log = mov_log + " LEFT "
-            if self.cell_col == 0:
-                new_col = constants.MAX_COL - 1
-            else:
-                new_col = self.cell_col - 1
+            new_col = make_pace(self.cell_col, 0, constants.MAX_COL - 1, -1)
             new_row = self.cell_row
 
         if self.last_direction == constants.MOVEMENT_RIGHT:
             mov_log = mov_log + " RIGHT "
-            if self.cell_col == constants.MAX_COL - 1:
-                new_col = 0
-            else:
-                new_col = self.cell_col + 1
+            new_col = make_pace(self.cell_col, constants.MAX_COL - 1, 0, 1)
             new_row = self.cell_row
 
         print >> out_file, 'B{} moves {} from r{} c{} to r{} c{}'.format(self.name, mov_log, self.cell_row,
