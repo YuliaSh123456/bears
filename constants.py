@@ -1,0 +1,17 @@
+
+# Game configuration constants
+INITIAL_LIFE_LEVEL = 100
+MAX_ROW = 4
+MAX_COL = 4
+HONEY_AMOUNT = 6
+BEARS_AMOUNT = 4
+
+# Internal constants
+REST = 0
+MOVE = 1
+MOVEMENT_UP = 0
+MOVEMENT_DOWN = 1
+MOVEMENT_LEFT = 2
+MOVEMENT_RIGHT = 3
+MOVEMENT_RANDOM = 4
+
